@@ -1,0 +1,38 @@
+[
+  {
+    "Stats": {
+      "DynamicInstructions": 62882,
+      "ExecutionTimeInMilliseconds": 956,
+      "ProcessorTime": 0.010872
+    },
+    "buildID": "bld_257b5deb704e45008b8027445dccca44",
+    "iteration_value": "100",
+    "output": "106005.01Ux04000000000000000040F9E150200000000000000140F9E150200000008000000000000000\n",
+    "taskId": "tsk_63b4cd422d0448a58e43f6e25ce7a1e4",
+    "uxhw": false
+  },
+  {
+    "Stats": {
+      "DynamicInstructions": 576866,
+      "ExecutionTimeInMilliseconds": 918,
+      "ProcessorTime": 0.019561
+    },
+    "buildID": "bld_257b5deb704e45008b8027445dccca44",
+    "iteration_value": "10000",
+    "output": "106004.61Ux04000000000000000040F9E149C00000000000000140F9E149C00000008000000000000000\n",
+    "taskId": "tsk_8cf6da248cd044809f5f29d17ab9babb",
+    "uxhw": false
+  },
+  {
+    "Stats": {
+      "DynamicInstructions": 117335,
+      "ExecutionTimeInMilliseconds": 890,
+      "ProcessorTime": 0.012589
+    },
+    "buildID": "bld_257b5deb704e45008b8027445dccca44",
+    "iteration_value": "1000",
+    "output": "106021.09Ux04000000000000000040F9E251600000000000000140F9E251600000008000000000000000\n",
+    "taskId": "tsk_cc48e3fab73e4c9280418044dfb57b8a",
+    "uxhw": false
+  }
+]
