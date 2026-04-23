@@ -4,9 +4,108 @@ Software Engineer with 4 years of experience in the IT field at various companie
 
 # Signaloid API Demonstration Scripts
 
+**Repository:** [https://github.com/LikhithST/signaloid-demonstration](https://github.com/LikhithST/signaloid-demonstration)
+
 This repository contains shell scripts demonstrating how to interact with the [Signaloid Cloud API](https://signaloid.io/) to build and execute C programs. The scripts showcase two different approaches to calculating a portfolio's future value given an uncertain daily return: one using Signaloid's Uncertainty API (`uxhw.h`), and another using a traditional Monte Carlo simulation approach.
 
+## signaloid_pipe Workflow
+
+Both scripts follow the same automated pipeline via the Signaloid API:
+1. **Submit Build**: Uploads the embedded C code payload to be compiled.
+2. **Poll Build Status**: Waits until the build is `Completed`.
+3. **Submit Task**: Executes the compiled binary on a specified Signaloid Core (`CoreID`).
+4. **Poll Task Status**: Waits until the execution is `Completed`.
+5. **Retrieve Execution Statistics**: Fetches and displays statistics about the task execution, such as duration.
+6. **Retrieve Output**: Fetches and displays the standard output (stdout) from the executed task.
+
+**Example Script:**
+```bash
+#!/bin/bash
+
+# Configuration
+# Replace with your actual Signaloid API Key
+# API_KEY="YOUR_SIGNALOID_API_KEY"
+CORE_ID="cor_b21e4de9927158c1a5b603c2affb8a09" # using C0-S+
+BASE_URL="https://api.signaloid.io"
+
+# Helper function to extract JSON values using python3
+parse_json() {
+    python3 -c "import sys, json; print(json.load(sys.stdin)['$1'])"
+}
+
+echo "--- 1. Submitting Build ---"
+BUILD_RESPONSE=$(curl -s -X POST "$BASE_URL/sourcecode/builds" \
+    -H "Authorization: $API_KEY" \
+    -H "Content-Type: application/json" \
+    -d "{
+        \"Code\": \"<Code_with_or_without_uxhw.h>\",
+        \"Language\": \"C\",
+        \"CoreID\": \"$CORE_ID\"
+    }")
+
+BUILD_ID=$(echo "$BUILD_RESPONSE" | parse_json "BuildID")
+echo "Build ID: $BUILD_ID"
+
+# Poll Build Status
+echo "--- 2. Polling Build Status ---"
+while true; do
+    BUILD_STATUS_RESPONSE=$(curl -s -H "Authorization: $API_KEY" "$BASE_URL/builds/$BUILD_ID")
+    STATUS=$(echo "$BUILD_STATUS_RESPONSE" | parse_json "Status")
+    echo "Current Status: $STATUS"
+    
+    if [ "$STATUS" == "Completed" ]; then
+        break
+    elif [ "$STATUS" == "Cancelled" ] || [ "$STATUS" == "Stopped" ]; then
+        echo "Build terminal state reached: $STATUS"
+        exit 1
+    fi
+    sleep 2
+done
+
+# Execute Task
+echo "--- 3. Submitting Task ---"
+TASK_RESPONSE=$(curl -s -X POST "$BASE_URL/builds/$BUILD_ID/tasks" \
+    -H "Authorization: $API_KEY")
+TASK_ID=$(echo "$TASK_RESPONSE" | parse_json "TaskID")
+echo "Task ID: $TASK_ID"
+
+# Poll Task Status
+echo "--- 4. Polling Task Status ---"
+while true; do
+    TASK_STATUS_RESPONSE=$(curl -s -H "Authorization: $API_KEY" "$BASE_URL/tasks/$TASK_ID")
+    STATUS=$(echo "$TASK_STATUS_RESPONSE" | parse_json "Status")
+    echo "Current Status: $STATUS"
+    
+    if [ "$STATUS" == "Completed" ]; then
+        break
+    elif [ "$STATUS" == "Cancelled" ] || [ "$STATUS" == "Stopped" ]; then
+        echo "Task terminal state reached: $STATUS"
+        exit 1
+    fi
+    sleep 2
+done
+
+# Fetch Execution Stats
+echo "--- 5. Fetching Execution Stats ---"
+# The TASK_STATUS_RESPONSE from the last poll already contains the completed task details
+EXECUTION_STATS=$(echo "$TASK_STATUS_RESPONSE" | python3 -c "import sys, json; print(json.dumps(json.load(sys.stdin).get('Stats', {}), indent=2))")
+echo "Execution Statistics:"
+echo "$EXECUTION_STATS"
+
+# Fetch Outputs
+echo "--- 6. Retrieving Output ---"
+OUTPUT_RESPONSE=$(curl -s -H "Authorization: $API_KEY" "$BASE_URL/tasks/$TASK_ID/outputs")
+OUTPUT_URL=$(echo "$OUTPUT_RESPONSE" | parse_json "Stdout")
+
+echo "Resulting Output:"
+curl -s "$OUTPUT_URL"
+echo ""
+```
+
+
+
 ## Files Included
+
 
 ### 1. `run_signaloid_pipe_with_uxhw.sh`
 This script submits a C program that leverages Signaloid's Uncertainty API (`uxhw.h`).
@@ -94,11 +193,41 @@ To run these scripts, you need the following installed on your system:
    ./run_signaloid_pipe_without_uxhw.sh
    ```
 
-## Script Workflow
+# Performance Benchmarking: Monte Carlo vs. Signaloid UxHw
 
-Both scripts follow the same automated pipeline via the Signaloid API:
-1. **Submit Build**: Uploads the embedded C code payload to be compiled.
-2. **Poll Build Status**: Waits until the build is `Completed`.
-3. **Submit Task**: Executes the compiled binary on a specified Signaloid Core (`CoreID`).
-4. **Poll Task Status**: Waits until the execution is `Completed`.
-5. **Retrieve Output**: Fetches and displays the standard output (stdout) from the executed task.
+This project evaluates the performance and accuracy characteristics of traditional iterative simulation (Monte Carlo) against hardware-accelerated probabilistic computation (Signaloid UxHw).
+
+## Performance Comparison Table
+
+| Method | Iterations | Dynamic Instructions | Processor Time (s) | Execution Time (ms) | Result |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| Monte Carlo | 10,000 | 577,131 | 0.0198 | 934 | 106,000.00 |
+| Monte Carlo | 50,000 | 2,614,707 | 0.0524 | 944 | 106,000.00 |
+| Monte Carlo | 80,000 | 4,150,117 | 0.0831 | 974 | 106,000.00 |
+| Monte Carlo | 100,000 | 5,168,923 | 0.0645 | 865 | 106,000.00 |
+| Monte Carlo | 200,000 | 10,268,991 | 0.1476 | 1,011 | 106,000.00 |
+| Monte Carlo | 500,000 | 25,566,251 | 0.2877 | 1,208 | 106,000.00 |
+| Monte Carlo | 1,000,000 | 51,067,334 | 0.5649 | 1,394 | 106,000.00 |
+| Monte Carlo | 5,000,000 | 255,064,910 | 2.7872 | 3,685 | 106,000.03 |
+| Monte Carlo | 10,000,000 | 510,069,396 | 6.3186 | 7,127 | 105,999.67 |
+| **UxHw Trial 1** | N/A | 2,495,783 | 0.0604 | 1,456 | 106,511.02 |
+| **UxHw Trial 2** | N/A | 2,525,432 | 0.0560 | 1,363 | 105,569.42 |
+| **UxHw Trial 3** | N/A | 2,512,705 | 0.0602 | 1,513 | 106,226.82 |
+| **UxHw Trial 4** | N/A | 2,497,769 | 0.0641 | 1,461 | 106,750.00 |
+| **UxHw Trial 5** | N/A | 2,531,113 | 0.0615 | 1,381 | 105,322.49 |
+| **UxHw Trial 6** | N/A | 2,499,622 | 0.0564 | 1,426 | 106,347.56 |
+| **UxHw Trial 7** | N/A | 2,499,622 | 0.0564 | 1,426 | 106,347.56 |
+
+## Signaloid Execution Plots
+
+The performance and distribution metrics gathered by the automation scripts can be visualized as PNG images. Using the `plot_results.go` script, the JSON outputs are automatically aggregated and charted. The plots are saved locally to a timestamped directory located at `plots/<date_time>/`.
+
+The generated plots include:
+1. **`instrChart.png`**: A line graph comparing Dynamic Instructions against the number of mathematical iterations for both models.
+2. **`timeChart.png`**: A line graph comparing the Processor Execution Time (in seconds) between standard Monte Carlo and Signaloid UxHw.
+3. **`distChart.png`**: A clustered histogram showing the probability density distribution of the portfolio value calculation outputs.
+
+## Key Findings
+
+1. **Computational Cost:** The Monte Carlo method exhibits linear growth in `ProcessorTime` and `DynamicInstructions` as the iteration count ($N$) increases, adhering to $O(N)$ complexity.
+2. **Deterministic Efficiency:** The Signaloid UxHw approach decouples computational complexity from the iteration count, enabling constant-time ($O(1)$) risk analysis, as shown by the stable `ProcessorTime` across trials.
