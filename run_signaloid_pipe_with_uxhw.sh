@@ -3,7 +3,7 @@
 # Configuration
 # Replace with your actual Signaloid API Key
 # API_KEY="YOUR_SIGNALOID_API_KEY"
-CORE_ID="cor_9a3efb0094405df5aeb61cf1f29606a0"
+CORE_ID="cor_b21e4de9927158c1a5b603c2affb8a09"
 BASE_URL="https://api.signaloid.io"
 
 # Helper function to extract JSON values using python3
@@ -32,6 +32,7 @@ while true; do
     echo "Current Status: $STATUS"
     
     if [ "$STATUS" == "Completed" ]; then
+        BUILD_STATUS=$STATUS
         break
     elif [ "$STATUS" == "Cancelled" ] || [ "$STATUS" == "Stopped" ]; then
         echo "Build terminal state reached: $STATUS"
@@ -63,11 +64,19 @@ while true; do
     sleep 2
 done
 
+# Fetch Execution Stats
+echo "--- 5. Fetching Execution Stats ---"
+# The TASK_STATUS_RESPONSE from the last poll already contains the completed task details
+EXECUTION_STATS=$(echo "$TASK_STATUS_RESPONSE" | python3 -c "import sys, json; print(json.dumps(json.load(sys.stdin).get('Stats', {}), indent=2))")
+echo "Execution Statistics:"
+echo "$EXECUTION_STATS"
+
 # Fetch Outputs
-echo "--- 5. Retrieving Output ---"
+echo "--- 6. Retrieving Output ---"
 OUTPUT_RESPONSE=$(curl -s -H "Authorization: $API_KEY" "$BASE_URL/tasks/$TASK_ID/outputs")
 OUTPUT_URL=$(echo "$OUTPUT_RESPONSE" | parse_json "Stdout")
 
 echo "Resulting Output:"
-curl -s "$OUTPUT_URL"
+STDOUT_CONTENT=$(curl -s "$OUTPUT_URL")
+echo "$STDOUT_CONTENT"
 echo ""
