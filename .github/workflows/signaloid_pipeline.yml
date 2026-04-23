@@ -19,7 +19,7 @@ env:
   MAX_VAL: "10000000"
 
 jobs:
-  execute-pipeline:
+  run-signaloid-pipeline:
     runs-on: ubuntu-latest
     permissions:
       contents: write
