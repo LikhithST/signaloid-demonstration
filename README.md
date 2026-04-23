@@ -8,6 +8,21 @@ Software Engineer with 4 years of experience in the IT field at various companie
 
 This repository contains shell scripts demonstrating how to interact with the [Signaloid Cloud API](https://signaloid.io/) to build and execute C programs. The scripts showcase two different approaches to calculating a portfolio's future value given an uncertain daily return: one using Signaloid's Uncertainty API (`uxhw.h`), and another using a traditional Monte Carlo simulation approach.
 
+## Table of Contents
+- About Me
+- Signaloid API Demonstration Scripts
+  - signaloid_pipe Workflow
+  - Files Included
+    - 1. `run_signaloid_pipe_with_uxhw.sh`
+    - 2. `run_signaloid_pipe_without_uxhw.sh`
+  - Prerequisites
+  - Usage
+  - Automated CI/CD Pipeline (GitHub Actions)
+- Performance Benchmarking: Monte Carlo vs. Signaloid UxHw
+  - Performance Comparison Table
+  - Signaloid Execution Plots
+  - Key Findings
+
 ## signaloid_pipe Workflow
 
 Both scripts follow the same automated pipeline via the Signaloid API:
@@ -193,6 +208,12 @@ To run these scripts, you need the following installed on your system:
    ./run_signaloid_pipe_without_uxhw.sh
    ```
 
+## Automated CI/CD Pipeline (GitHub Actions)
+
+This repository also features a fully automated GitHub Actions workflow that executes both the Monte Carlo and UxHw C programs, fetches their execution statistics, generates performance plots, and commits the results back to the repository.
+
+👉 **[Read the GitHub Actions Pipeline Documentation here](https://github.com/LikhithST/signaloid-demonstration/tree/main/.github/workflows/README.md)** for details on how to configure and trigger the automated pipeline.
+
 # Performance Benchmarking: Monte Carlo vs. Signaloid UxHw
 
 This project evaluates the performance and accuracy characteristics of traditional iterative simulation (Monte Carlo) against hardware-accelerated probabilistic computation (Signaloid UxHw).
@@ -225,7 +246,8 @@ The performance and distribution metrics gathered by the automation scripts can 
 The generated plots include:
 1. **`instrChart.png`**: A line graph comparing Dynamic Instructions against the number of mathematical iterations for both models.
 2. **`timeChart.png`**: A line graph comparing the Processor Execution Time (in seconds) between standard Monte Carlo and Signaloid UxHw.
-3. **`distChart.png`**: A clustered histogram showing the probability density distribution of the portfolio value calculation outputs.
+3. **`execTimeChart.png`**: A line graph comparing the total Execution Time (in milliseconds) required to complete the tasks.
+4. **`distChart.png`**: A clustered histogram showing the probability density distribution of the portfolio value calculation outputs.
 
 ## Key Findings
 
