@@ -1,0 +1,49 @@
+name: Signaloid Execution Pipeline
+
+on:
+  # Allows you to trigger the workflow manually from the GitHub Actions tab
+  workflow_dispatch:
+  # Optionally trigger on pushes to main
+  push:
+    branches:
+      - main
+
+env:
+  # Set your pipeline variables here
+  CORE_ID: "cor_b21e4de9927158c1a5b603c2affb8a09"
+  CFILENAME: "automation/single-file-source-code/uniform-distribution-without-uxhw.c"
+  UXHW: "false"
+  MIN_VAL: "100"
+  MAX_VAL: "10000"
+
+jobs:
+  execute-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go Environment
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Run Signaloid Automation Scripts
+        env:
+          # Securely inject the API key from GitHub Secrets
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          echo "Starting Signaloid Pipeline..."
+          go run automation/create_build.go "$CFILENAME" "$UXHW"
+          go run automation/create_task.go "$CFILENAME" "$MIN_VAL" "$MAX_VAL"
+          go run automation/fetch_outputs.go "$CFILENAME"
+          go run automation/plot_results.go
+          go run automation/archive_json.go
+
+      - name: Upload Artifacts (Plots and History)
+        uses: actions/upload-artifact@v4
+        with:
+          name: signaloid-execution-results
+          path: |
+            plots/
+            history/
