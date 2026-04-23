@@ -15,8 +15,8 @@ env:
   UXHW_1: "false"
   CFILENAME_2: "automation/single-file-source-code/uniform-distribution-with-uxhw.c"
   UXHW_2: "true"
-  MIN_VAL: "100"
-  MAX_VAL: "10000"
+  MIN_VAL: "1"
+  MAX_VAL: "10000000"
 
 jobs:
   execute-pipeline:
