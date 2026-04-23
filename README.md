@@ -236,6 +236,13 @@ The generated plots include:
 4. **`distChart.png`**: A clustered histogram showing the probability density distribution of the portfolio value calculation outputs.
 
 <!-- PLOTS_START -->
+![Dynamic Instructions](plots/20260423_212241/instrChart.png)
+
+![Processor Time](plots/20260423_212241/timeChart.png)
+
+![Execution Time](plots/20260423_212241/execTimeChart.png)
+
+![Result Distribution](plots/20260423_212241/distChart.png)
 <!-- PLOTS_END -->
 
 ### Key Findings
