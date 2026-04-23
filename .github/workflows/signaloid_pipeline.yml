@@ -13,8 +13,8 @@ env:
   CORE_ID: "cor_b21e4de9927158c1a5b603c2affb8a09"
   CFILENAME: "automation/single-file-source-code/uniform-distribution-without-uxhw.c"
   UXHW: "false"
-  MIN_VAL: "100"
-  MAX_VAL: "10000"
+  MIN_VAL: "1"
+  MAX_VAL: "10000000"
 
 jobs:
   execute-pipeline:
