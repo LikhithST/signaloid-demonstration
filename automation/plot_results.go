@@ -264,7 +264,7 @@ func main() {
 	}`, string(labelsJSON), string(falseDistJSON), string(trueDistJSON))
 
 	saveChart(instrConfig, filepath.Join(targetDir, "instrChart.png"))
-	saveChart(timeConfig, filepath.Join(targetDir, "timeChart.png"))
+	saveChart(timeConfig, filepath.Join(targetDir, "processorTimeChart.png"))
 	saveChart(execTimeConfig, filepath.Join(targetDir, "execTimeChart.png"))
 	saveChart(distConfig, filepath.Join(targetDir, "distChart.png"))
 

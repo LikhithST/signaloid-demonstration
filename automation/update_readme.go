@@ -199,7 +199,7 @@ func main() {
 	newPlots := fmt.Sprintf(`<!-- PLOTS_START -->
 ![Dynamic Instructions](plots/%[1]s/instrChart.png)
 
-![Processor Time](plots/%[1]s/timeChart.png)
+![Processor Time](plots/%[1]s/processorTimeChart.png)
 
 ![Execution Time](plots/%[1]s/execTimeChart.png)
 
