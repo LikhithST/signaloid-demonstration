@@ -1,4 +1,8 @@
+# Introduction 
 
+This repository features a fully automated GitHub Actions workflow that executes both the Monte Carlo and UxHw C programs, fetches their execution statistics, generates performance tables and plots, and commits the results back to this repository.
+
+ [**Read the GitHub Actions Pipeline Documentation here**](https://github.com/LikhithST/signaloid-performance-benchmark/blob/main/.github/workflows/README.md) for details on how to configure and trigger the automated pipeline.
 
 # Table of Contents
 1. [Performance Benchmarking](#performance-benchmarking-monte-carlo-vs-signaloid-uxhw)
@@ -6,12 +10,11 @@
     - [Signaloid Execution Plots](#signaloid-execution-plots)
     - [Key Findings](#key-findings)
 
-2. [GitHub Actions to generate Performance analysis table and plots for Signaloid Platform](#github-actions-to-generate-performance-analysis-table-and-plots-for-signaloid-platform)
-3. [Signaloid API Demonstration Scripts](#signaloid-api-demonstration-scripts)
-4. [signaloid_pipe Workflow](#signaloid_pipe-workflow)
-5. [Files Included](#files-included)
-6. [Prerequisites](#prerequisites)
-7. [Usage](#usage)
+2. [Signaloid API Demonstration Scripts](#signaloid-api-demonstration-scripts)
+3. [signaloid_pipe Workflow](#signaloid_pipe-workflow)
+4. [Files Included](#files-included)
+5. [Prerequisites](#prerequisites)
+6. [Usage](#usage)
 
 
 
@@ -58,12 +61,6 @@ The generated plots include:
 1. **Computational Cost:** The Monte Carlo method exhibits linear growth in `ProcessorTime` as iteration count ($N$) increases, adhering to $O(N)$ complexity.
 2. **Deterministic Efficiency:** The Signaloid UxHw approach decouples computational complexity from iteration count, enabling constant-time $O(1)$ risk analysis.
 3. **Precision:** Monte Carlo results represent statistical point estimates that converge slowly, whereas Signaloid provides the analytical distribution, offering higher fidelity for tail-risk modeling.
-
-## GitHub Actions to generate Performance analysis table and plots for Signaloid Platform 
-
-This repository also features a fully automated GitHub Actions workflow that executes both the Monte Carlo and UxHw C programs, fetches their execution statistics, generates performance plots, and commits the results back to the repository.
-
- [**Read the GitHub Actions Pipeline Documentation here**](https://github.com/LikhithST/signaloid-performance-benchmark/blob/main/.github/workflows/README.md) for details on how to configure and trigger the automated pipeline.
 
 ---
 
