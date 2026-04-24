@@ -1,6 +1,6 @@
 # Introduction 
 
-This repository features a GitHub Actions workflow that executes both the Monte Carlo and UxHw C programs, fetches their execution statistics, generates performance comparison tables and plots, and commits the results back to this repository.
+This repository features a GitHub Actions workflow that executes both the Monte Carlo and UxHw C programs, fetches their execution statistics, generates performance comparison table and plots, and commits the results back to this repository.
 
  [**Read the GitHub Actions Pipeline Documentation here**](https://github.com/LikhithST/signaloid-performance-benchmark/blob/main/.github/workflows/README.md) for details on how to configure and trigger the automated pipeline.
 
